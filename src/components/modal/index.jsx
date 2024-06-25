@@ -2,23 +2,24 @@ import { TextField } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../service";
-export default function Modal({ showModal, setShowModal }) {
-  const [code, setCode] = useState(null);
-  const navigate = useNavigate();
 
+export default function Modal({ showModal, setShowModal }) {
+  const [code, setCode] = useState("");
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const payload={ code, email: localStorage.getItem("email") };
 
-    try {
-      const result = await auth.verify(payload);
-      if (result.status === 200 || 201) {
-        navigate("/sign-in");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  
+    const payload = { code, email: localStorage.getItem("email") };
+    navigate("/sign-in");
+    
+    // try {
+    //     const result = await auth.verify(payload);
+    //     if (result.status === 200) {
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
+
   };
   return (
     <>
