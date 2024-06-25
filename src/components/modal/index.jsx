@@ -8,9 +8,9 @@ export default function Modal({ showModal, setShowModal }) {
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const payload = { code, email: localStorage.getItem("email") };
     navigate("/sign-in");
+
+    // const payload = { code, email: localStorage.getItem("email") };
     
     // try {
     //     const result = await auth.verify(payload);
