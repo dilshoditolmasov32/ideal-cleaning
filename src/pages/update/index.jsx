@@ -8,8 +8,8 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 import auth from "../../components/service/auth";
-import  Modal  from "../../components/modal";
-
+import Modal from "../../components/modal";
+import { useNavigate } from "react-router-dom";
 
 const defaultTheme = createTheme();
 
@@ -17,6 +17,8 @@ const defaultTheme = createTheme();
 export default function SignUp() {
   const [form, setForm] = useState({});
   const [showModal, setShowModal] = useState(false);
+  const navigate=useNavigate()
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,11 +27,11 @@ export default function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(form)
     try {
-      const result = await auth.sign_up(form);
-      if (result.status === 200) {
-        setShowModal(true);
-        localStorage.setItem("email", form.email);
+      const result = await auth.verify_forgot_password(form)
+      if (result.status === 200 || result.status===201 ) {
+        navigate("/")
       }
     } catch (error) {
       console.log(error);
@@ -51,16 +53,16 @@ export default function SignUp() {
                 alignItems: "center",
               }}
             >
-              <h3 className="text-5xl">Register</h3>
+              <h3 className="text-5xl">Update</h3>
               <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
-                      id="fullName"
-                      label="Full Name"
-                      name="full_name"
-                      autoComplete="full_name"
+                      id="code"
+                      label="Enter Code"
+                      name="code"
+                      autoComplete="code"
                       onChange={handleChange}
                     
                     />
@@ -79,25 +81,15 @@ export default function SignUp() {
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
-                      name="password"
-                      label="Password"
+                      name="new_password"
+                      label="Enter new password"
                       type="password"
                       id="password"
                       onChange={handleChange}
                      
                     />
                   </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      name="phone_number"
-                      label="Phone number"
-                      type="text"
-                      id="phone_number"
-                      onChange={handleChange}
-                     
-                    />
-                  </Grid>
+            
 
                 </Grid>
 
@@ -107,7 +99,7 @@ export default function SignUp() {
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
                 >
-                  Sign Up
+                  Update
                 </Button>
               </Box>
             </Box>

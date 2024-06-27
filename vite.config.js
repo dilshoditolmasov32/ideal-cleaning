@@ -15,6 +15,10 @@ export default defineConfig({
           find: "@pages",
           replacement: "/src/pages/index.jsx",
         },
+        {
+          find: "@components",
+          replacement: "/src/components/index.jsx",
+        },
       
     ]
   }

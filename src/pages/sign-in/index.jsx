@@ -7,33 +7,44 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { auth } from "../../components/service";
+import auth from "../../components/service/auth";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const defaultTheme = createTheme();
 
 export default function SignIn() {
   const [form, setForm] = useState({});
-  const navigate=useNavigate()
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
+
   const handleSubmit = async (e) => {
-    e.preventDefault()
-  
-   
+    e.preventDefault();
     try {
       const result = await auth.sign_in(form);
-      if (result.status === 200 || 201) {
-        navigate("/main")
+      if (result.status === 200) {
+        navigate("/main");
+        toast.success("Xush kelibsiz");
       }
     } catch (error) {
-      console.log(error);
-    }
+      toast.error("email yoki parol xato, qaytadan urinib ko'ring")
+      }
+
+      e.target.reset()
   };
 
+
+  const handleClick=()=>{
+    navigate("/sign-up")
+  }
+
+  const handlePassword=()=>{
+    navigate("/forgot-password")
+  }
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -86,6 +97,17 @@ export default function SignIn() {
             >
               Sign In
             </Button>
+          <div className="flex justify-between">
+
+            <h4 onClick={handleClick}
+              className="text-left underline cursor-pointer text-[red] text-[underlane]
+              text-xl"
+              >
+              Register
+            </h4>
+
+            <h4 className="hover:underline hover:cursor-pointer" onClick={handlePassword} >Forgot Password</h4>
+              </div>
           </Box>
         </Box>
       </Container>
