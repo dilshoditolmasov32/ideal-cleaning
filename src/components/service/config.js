@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const htpp = axios.create({
-  baseURL: "https://app.olimjanov.uz/v1",
+  baseURL: "https://service.olimjanov.uz/v1",
 });
 
 htpp.interceptors.request.use((config) => {

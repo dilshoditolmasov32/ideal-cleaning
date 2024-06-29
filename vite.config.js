@@ -19,6 +19,10 @@ export default defineConfig({
           find: "@components",
           replacement: "/src/components/index.jsx",
         },
+        {
+          find: "@validation",
+          replacement: "/src/components/utils/validation.js",
+        },
       
     ]
   }

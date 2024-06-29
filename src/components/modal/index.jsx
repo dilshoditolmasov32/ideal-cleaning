@@ -8,18 +8,18 @@ export default function Modal({ showModal, setShowModal }) {
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const payload = { code, email: localStorage.getItem("email") };
-    navigate("/");
-    
-    // try {
-    //   const result = await auth.verify(payload);
-    //   if (result.status === 200) {
-    //   }  
-    // } catch (error) {
-    //   console.log(error);
-    // }
 
+    const payload = { code, email: localStorage.getItem("email") };
+
+    try {
+      const result = await auth.verify(payload);
+      console.log(result)
+      if (result.status === 201) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <>

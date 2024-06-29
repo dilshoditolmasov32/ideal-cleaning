@@ -10,41 +10,43 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import auth from "../../components/service/auth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { signInValidationSchema } from "@validation"
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { IconButton, InputAdornment } from "@mui/material";
 
 const defaultTheme = createTheme();
 
 export default function SignIn() {
-  const [form, setForm] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+  const initialValues = {
+    email: "",
+    password: "",
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const result = await auth.sign_in(form);
+      const result = await auth.sign_in(values);
       if (result.status === 200) {
         navigate("/main");
         toast.success("Xush kelibsiz");
       }
     } catch (error) {
-      toast.error("email yoki parol xato, qaytadan urinib ko'ring")
-      }
-
-      e.target.reset()
+      toast.error("email yoki parol xato, qaytadan urinib ko'ring");
+    }
+    setSubmitting(false);
   };
 
+  const handleClick = () => {
+    navigate("/sign-up");
+  };
 
-  const handleClick=()=>{
-    navigate("/sign-up")
-  }
+  const handlePassword = () => {
+    navigate("/forgot-password");
+  };
 
-  const handlePassword=()=>{
-    navigate("/forgot-password")
-  }
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -60,55 +62,73 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box
-            component="form"
+
+          <Formik
+            initialValues={initialValues}
+            validationSchema={signInValidationSchema}
             onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
           >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              onChange={handleChange}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              onChange={handleChange}
-            />
+            {({ isSubmitting }) => (
+              <Form>
+                <Field
+                  name="email"
+                  type="email"
+                  as={TextField}
+                  label="Email"
+                  fullWidth
+                  margin="normal"
+                  variant="outlined"
+                  helperText={
+                    <ErrorMessage
+                      name="email"
+                      component="p"
+                      className="text-[red] text-[15px]"
+                    />
+                  }
+                />
 
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-          <div className="flex justify-between">
+                <Field
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  as={TextField}
+                  label="Password"
+                  fullWidth
+                  margin="normal"
+                  variant="outlined"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  helperText={
+                    <ErrorMessage
+                      name="password"
+                      component="p"
+                      className="text-[red] text-[15px]"
+                    />
+                  }
+                />
 
-            <h4 onClick={handleClick}
-              className="text-left underline cursor-pointer text-[red] text-[underlane]
-              text-xl"
-              >
-              Register
-            </h4>
-
-            <h4 className="hover:underline hover:cursor-pointer" onClick={handlePassword} >Forgot Password</h4>
-              </div>
-          </Box>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={isSubmitting}
+                  fullWidth
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  {isSubmitting ? "Loading..." : "Tizimga kirish"}
+                </Button>
+              </Form>
+            )}
+          </Formik>
         </Box>
       </Container>
     </ThemeProvider>

@@ -21,7 +21,7 @@ const Index = () => {
        navigate("/update")
       }
     } catch (error) {
-      toast.error("email yoki parol xato, qaytadan urinib ko'ring");
+      toast.error("email kiritishdan xatolik bor");
     }
 
     // e.target.reset();
