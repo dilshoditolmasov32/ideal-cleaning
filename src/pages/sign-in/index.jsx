@@ -126,9 +126,17 @@ export default function SignIn() {
                 >
                   {isSubmitting ? "Loading..." : "Tizimga kirish"}
                 </Button>
+                <div className="flex justify-between">
+
+                <p onClick={handleClick} className="hover:cursor-pointer hover:underline text-[20px]">
+                  Register
+                </p>
+                <p className="text-end text-[crimson] hover:cursor-pointer hover:underline text-[20px]" onClick={handlePassword}>Forgot password?</p>
+                </div>
               </Form>
             )}
           </Formik>
+
         </Box>
       </Container>
     </ThemeProvider>
