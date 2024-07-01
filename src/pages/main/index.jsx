@@ -1,7 +1,11 @@
-import React from "react";
-
+import { MainLayout } from "@ui";
 const Index = () => {
-  return <div className="text-5xl text-center pt-10 font-bold">Xush kelibsiz</div>;
+  return (
+    <>
+    <MainLayout/>
+     
+    </>
+  );
 };
 
 export default Index;

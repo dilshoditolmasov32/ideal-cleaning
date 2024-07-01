@@ -1,6 +1,7 @@
 import { TextField } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import auth from "../service/auth";
 
 export default function Modal({ showModal, setShowModal }) {
@@ -8,17 +9,15 @@ export default function Modal({ showModal, setShowModal }) {
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const payload = { code, email: localStorage.getItem("email") };
-
     try {
-      const result = await auth.verify(payload);
-      console.log(result)
-      if (result.status === 201) {
+      const responsive = await auth.verify(payload);
+      if (responsive.status === 200 || responsive.status === 201) {
+        toast.success("Roy'xatdan muvaqqiyatli o'tdingiz");
         navigate("/");
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Noto'gri kod kiritildi, qaytadan urinib ko'ring");
     }
   };
   return (
@@ -29,7 +28,9 @@ export default function Modal({ showModal, setShowModal }) {
             <div className="relative w-auto my-6 mx-auto max-w-3xl">
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none pl-5 pr-5">
                 <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
-                  <h3 className="text-3xl font-semibold">Code</h3>
+                  <p className="text-xl font-semibold">
+                    Iltimos emailga yuborilgan kodni kiriting
+                  </p>
                   <button
                     className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
                     onClick={() => setShowModal(false)}

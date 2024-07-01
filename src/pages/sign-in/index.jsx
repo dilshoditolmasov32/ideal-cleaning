@@ -7,18 +7,21 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import auth from "../../components/service/auth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { signInValidationSchema } from "@validation"
+import { signInValidationSchema } from "@validation";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { IconButton, InputAdornment } from "@mui/material";
+import auth from "../../components/service/auth";
+
 
 const defaultTheme = createTheme();
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [isExploding, setIsExploding] = useState(false);
   const navigate = useNavigate();
 
   const initialValues = {
@@ -26,15 +29,16 @@ export default function SignIn() {
     password: "",
   };
 
-  const handleSubmit = async (values, { setSubmitting }) => {
+  const handleSubmit = async (values) => {
     try {
-      const result = await auth.sign_in(values);
-      if (result.status === 200) {
+      const response = await auth.sign_in(values);
+      if (response.status === 200 ) {
+        localStorage.setItem("accses_token", response?.data?.access_token )
         navigate("/main");
         toast.success("Xush kelibsiz");
       }
     } catch (error) {
-      toast.error("email yoki parol xato, qaytadan urinib ko'ring");
+      toast.error("Email yoki parol xato, qaytadan urinib ko'ring");
     }
     setSubmitting(false);
   };
@@ -60,7 +64,7 @@ export default function SignIn() {
           }}
         >
           <Typography component="h1" variant="h5">
-            Sign in
+            Tizimga kirish
           </Typography>
 
           <Formik
@@ -91,7 +95,7 @@ export default function SignIn() {
                   name="password"
                   type={showPassword ? "text" : "password"}
                   as={TextField}
-                  label="Password"
+                  label="Parol"
                   fullWidth
                   margin="normal"
                   variant="outlined"
@@ -124,19 +128,25 @@ export default function SignIn() {
                   fullWidth
                   sx={{ mt: 3, mb: 2 }}
                 >
-                  {isSubmitting ? "Loading..." : "Tizimga kirish"}
+                  {isSubmitting ? "Yuklanmoqda..." : "Tizimga kirish"}
                 </Button>
                 <div className="flex justify-between">
-
-                <p onClick={handleClick} className="hover:cursor-pointer hover:underline text-[20px]">
-                  Register
-                </p>
-                <p className="text-end text-[crimson] hover:cursor-pointer hover:underline text-[20px]" onClick={handlePassword}>Forgot password?</p>
+                  <p
+                    onClick={handleClick}
+                    className="hover:cursor-pointer hover:underline text-[20px]"
+                  >
+                    Register
+                  </p>
+                  <p
+                    className="text-end text-[crimson] hover:cursor-pointer hover:underline text-[20px]"
+                    onClick={handlePassword}
+                  >
+                    Forgot password?
+                  </p>
                 </div>
               </Form>
             )}
           </Formik>
-
         </Box>
       </Container>
     </ThemeProvider>

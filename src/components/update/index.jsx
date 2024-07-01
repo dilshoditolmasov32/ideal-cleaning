@@ -6,19 +6,17 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useState } from "react";
-import auth from "../../components/service/auth";
-import Modal from "../../components/modal";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import auth from "../service/auth";
+import Modal from "../modal";
 
 const defaultTheme = createTheme();
-
 
 export default function SignUp() {
   const [form, setForm] = useState({});
   const [showModal, setShowModal] = useState(false);
-  const navigate=useNavigate()
-
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,17 +25,16 @@ export default function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(form)
+    console.log(form);
     try {
-      const result = await auth.verify_forgot_password(form)
-      if (result.status === 200 || result.status===201 ) {
-        navigate("/")
+      const result = await auth.verify_forgot_password(form);
+      if (result.status === 200 || result.status === 201) {
+        navigate("/");
       }
     } catch (error) {
       console.log(error);
     }
   };
-
 
   return (
     <>
@@ -64,7 +61,6 @@ export default function SignUp() {
                       name="code"
                       autoComplete="code"
                       onChange={handleChange}
-                    
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -75,7 +71,6 @@ export default function SignUp() {
                       name="email"
                       autoComplete="email"
                       onChange={handleChange}
-                    
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -86,11 +81,8 @@ export default function SignUp() {
                       type="password"
                       id="password"
                       onChange={handleChange}
-                     
                     />
                   </Grid>
-            
-
                 </Grid>
 
                 <Button

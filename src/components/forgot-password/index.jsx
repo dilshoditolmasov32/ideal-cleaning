@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import auth from "../../components/service/auth";
+import { toast } from "react-toastify";
+import auth from "../service/auth";
 
 const Index = () => {
   const [form, setForm] = useState({});
-  const navigate =useNavigate()
+  const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -15,19 +15,16 @@ const Index = () => {
     e.preventDefault();
     try {
       const result = await auth.forgot_password(form);
-      console.log(result)
       if (result.status === 200) {
-        localStorage.setItem("email", form.email)
-       navigate("/update")
+        localStorage.setItem("email", form.email);
+        navigate("/update");
       }
     } catch (error) {
       toast.error("email kiritishdan xatolik bor");
     }
 
-    // e.target.reset();
+    e.target.reset();
   };
-
-  
 
   return (
     <main id="content" role="main" className="w-full  max-w-lg mx-auto p-6">

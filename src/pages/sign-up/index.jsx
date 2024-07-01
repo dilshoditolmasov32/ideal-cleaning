@@ -1,41 +1,66 @@
 import * as React from "react";
+import { useState } from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useState } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { IconButton, InputAdornment } from "@mui/material";
+import { ErrorMessage, Field, Formik, Form } from "formik";
+import { useMask } from "@react-input/mask";
 import auth from "../../components/service/auth";
-import  Modal  from "../../components/modal";
-
+import Modal from "../../components/modal";
+import { signUpValidationSchema } from "@validation";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const defaultTheme = createTheme();
 
-
 export default function SignUp() {
-  const [form, setForm] = useState({});
+  const [showPassword, setShowPassword] = useState({});
   const [showModal, setShowModal] = useState(false);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+const navigate=useNavigate()
+  const initialValues = {
+    email: "",
+    full_name: "",
+    password: "",
+    phone_number: "",
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const inputRef = useMask({
+    mask: "+998 (__) ___-__-__",
+    replacement: { _: /\d/ },
+  });
+
+
+  const handleClick = () => {
+    console.log("Ok")
+    navigate("/");
+  };
+
+
+  const handleSubmit = async (values) => {
+    console.log(values);
+    const phone_number = values.phone_number.replace(/\D/g, "");
+    const payload = { ...values, phone_number: `+${phone_number}` };
     try {
-      const result = await auth.sign_up(form);
+      const result = await auth.sign_up(payload);
       if (result.status === 200) {
-        setShowModal(true);
-        localStorage.setItem("email", form.email);
+        localStorage.setItem("email", values.email);
+        toast.success("Tabriklaymiz 1-bosqichdan muvaqqiyatli o'tdingiz");
+
+        setTimeout(() => {
+          setShowModal(true);
+        }, 1000);
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Xatolik bor");
     }
+    
+    values.target.reset()
   };
-
 
   return (
     <>
@@ -51,65 +76,120 @@ export default function SignUp() {
                 alignItems: "center",
               }}
             >
-              <h3 className="text-5xl">Register</h3>
-              <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      id="fullName"
-                      label="Full Name"
-                      name="full_name"
-                      autoComplete="full_name"
-                      onChange={handleChange}
-                    
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      id="email"
-                      label="Email Address"
+              <h3 className="text-4xl">Register</h3>
+              <Formik
+                initialValues={initialValues}
+                validationSchema={signUpValidationSchema}
+                onSubmit={handleSubmit}
+              >
+                {({ isSubmitting }) => (
+                  <Form>
+                    <Field
                       name="email"
-                      autoComplete="email"
-                      onChange={handleChange}
-                    
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
+                      type="email"
+                      as={TextField}
+                      label="Email"
                       fullWidth
-                      name="password"
-                      label="Password"
-                      type="password"
-                      id="password"
-                      onChange={handleChange}
-                     
+                      margin="normal"
+                      variant="outlined"
+                      helperText={
+                        <ErrorMessage
+                          name="email"
+                          component="p"
+                          className="text-[red] text-[15px]"
+                        />
+                      }
                     />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      name="phone_number"
-                      label="Phone number"
+                    <Field
+                      name="full_name"
                       type="text"
-                      id="phone_number"
-                      onChange={handleChange}
-                     
+                      as={TextField}
+                      label="FullName"
+                      fullWidth
+                      margin="normal"
+                      variant="outlined"
+                      helperText={
+                        <ErrorMessage
+                          name="full_name"
+                          component="p"
+                          className="text-[red] text-[15px]"
+                        />
+                      }
                     />
-                  </Grid>
 
-                </Grid>
+                    <Field
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      as={TextField}
+                      label="Password"
+                      fullWidth
+                      margin="normal"
+                      variant="outlined"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() => setShowPassword(!showPassword)}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                      helperText={
+                        <ErrorMessage
+                          name="password"
+                          component="p"
+                          className="text-[red] text-[15px]"
+                        />
+                      }
+                    />
 
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
-                >
-                  Sign Up
-                </Button>
-              </Box>
+                    <Field
+                      name="phone_number"
+                      as={TextField}
+                      label="Phone number"
+                      fullWidth
+                      margin="normal"
+                      variant="outlined"
+                      inputRef={inputRef}
+                      helperText={
+                        <ErrorMessage
+                          name="phone_number"
+                          component="p"
+                          className="text-[red] text-[15px]"
+                        />
+                      }
+                    />
+
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      disabled={isSubmitting}
+                      fullWidth
+                      sx={{ mt: 3, mb: 2 }}
+                    >
+                      {isSubmitting ? "Loading..." : "Tizimga kirish"}
+                    </Button>
+
+                    <div className="flex justify-end">
+                  <p
+                    onClick={handleClick}
+                    className="hover:cursor-pointer hover:underline text-[20px] font-medium"
+                  >
+                   Login
+                  </p>
+                
+                </div>
+                  </Form>
+                )}
+              </Formik>
             </Box>
           </Container>
         </ThemeProvider>
