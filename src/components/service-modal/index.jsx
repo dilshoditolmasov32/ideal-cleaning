@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import { TextField } from "@mui/material";
 import { Form } from "react-router-dom";
+import service from "../service/service";
 const style = {
   position: "absolute",
   top: "50%",
@@ -18,18 +19,25 @@ const style = {
 };
 
 export default function BasicModal({ open, setOpen }) {
-  const [modalData, setModalData] = useState({});
-
+  const [modalData, setModalData] = useState(null);
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setModalData({...modalData, [name]:value})
     
 };
-const handleSubmit = (e) => {
+
+const handleSubmit =async (e) => {
     e.preventDefault();
-    setModalData({...modalData, [name]:value})
+
+    try {
+      const response=await service.create(modalData)
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
     console.log(modalData);
 
-    // e.target.reset();
+    
   };
 
   return (
@@ -42,24 +50,27 @@ const handleSubmit = (e) => {
       >
         <Box sx={style}>
           <Form onSubmit={handleSubmit}>
-            <TextField
+            {/* <TextField
               fullWidth
               label="Mijoz ismi sharifi"
               margin="normal"
+              name="clientName"
               onChange={handleChange}
-            />
+            /> */}
 
             <TextField
               fullWidth
               label="Xizmat turi"
               margin="normal"
+              name="service_type"
               onChange={handleChange}
             />
 
             <TextField
               fullWidth
-              label="Xizmat narxi (so‘m)"
+              label="Xizmat narxi (so'm)"
               margin="normal"
+              name="service_price"
               onChange={handleChange}
             />
             <Button

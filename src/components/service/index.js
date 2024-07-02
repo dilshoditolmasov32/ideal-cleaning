@@ -1,3 +1,3 @@
 import auth from "./auth";
-
-export default { auth };
+import service from "./service";
+export default { auth, service };
