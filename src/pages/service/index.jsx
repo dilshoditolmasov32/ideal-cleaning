@@ -1,36 +1,18 @@
-import * as React from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { useEffect, useState, useMemo } from "react";
-import service from "../../components/service/service";
-import Modal2 from "../../components/service-modal";
+import { useEffect, useState } from "react";
+import { Button } from "@mui/material";
+import ServiceTable from "../../components/service-table";
+import AddServiceModal from "../../components/service-modal";
+import { service } from "../../components/service/service";
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Eclair", 262, 16.0, 24, 6.0),
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-];
-
-export default function BasicTable() {
- 
-
+const Index = () => {
+  const [open, setOpen] = useState(false);
+  const [data, setData] = useState([]);
 
   const getData = async () => {
     try {
-      const response = await service.get()
-      if (response.status===200 && response?.data?.services) {
-        console.log(response.data)
+      const response = await service.get();
+      if ((response.status===200  && response?.data?.services)||response.status===201  && response?.data?.services) {
+        setData(response?.data?.services);
       }
     } catch (error) {
       console.log(error);
@@ -38,43 +20,24 @@ export default function BasicTable() {
   };
 
   useEffect(() => {
-    getData()
-  
+    getData();
   }, []);
-  
+
   return (
     <>
-      <Modal2  />
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="left">T/r</TableCell>
-              <TableCell align="left">Mijoz ismi sharifi</TableCell>
-              <TableCell align="left">Xizmat turi</TableCell>
-              <TableCell align="left">Narxi</TableCell>
-              <TableCell align="left">Holat</TableCell>
-            </TableRow>
-          </TableHead>
-          {/* <TableBody>
-            {modalData?.map((item, index) => (
-              console.log(item)
-              // <TableRow
-              //   key={item.id}
-              //   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              // >
-              //   <TableCell component="th" scope="row">
-              //     {item.name}
-              //   </TableCell>
-              //   <TableCell align="">{item.calories}</TableCell>
-              //   <TableCell align="right">{item.fat}</TableCell>
-              //   <TableCell align="">{item.carbs}</TableCell>
-              //   <TableCell align="">{item.protein}</TableCell>
-              // </TableRow>
-            ))}
-          </TableBody> */}
-        </Table>
-      </TableContainer>
+      <AddServiceModal open={open} setOpen={setOpen} />
+      <div className="flex justify-end mb-3">
+        <Button
+          variant="contained"
+          disableElevation
+          onClick={() => setOpen(true)}
+        >
+          Buyurtma qo'shish
+        </Button>
+      </div>
+      <ServiceTable data={data} /> 
     </>
   );
-}
+};
+
+export default Index;

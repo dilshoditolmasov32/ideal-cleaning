@@ -1,90 +1,129 @@
 import * as React from "react";
 import { useState } from "react";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Modal from "@mui/material/Modal";
-import { TextField } from "@mui/material";
-import { Form } from "react-router-dom";
-import service from "../service/service";
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { Modal } from "@mui/material";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { serviceValidationSchema } from "@validation";
+import { service } from "../service/service";
 
-export default function BasicModal({ open, setOpen }) {
-  const [modalData, setModalData] = useState(null);
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setModalData({...modalData, [name]:value})
-    
-};
+const defaultTheme = createTheme();
 
-const handleSubmit =async (e) => {
-    e.preventDefault();
+export default function ServiceModal({ open, setOpen, editData }) {
+  const initialValues = {
+    name: editData?.name ? editData?.name : "",
+    price: editData?.price ? editData?.price : "",
+  };
 
-    try {
-      const response=await service.create(modalData)
-      console.log(response)
-    } catch (error) {
-      console.log(error)
+  const handleSubmit = async (values, { setSubmitting }) => {
+    if (editData) {
+      try {
+        const response = await service.update({ ...values, id: editData.id });
+        if (response.status === 200 || response.status === 201) {
+          window.location.reload();
+          setOpen(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      try {
+        const response = await service.create(values);
+        if (response.status === 200 || response.status === 201) {
+          window.location.reload();
+          setOpen(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
-    console.log(modalData);
 
-    
+    setSubmitting(false);
   };
 
   return (
-    <div>
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Form onSubmit={handleSubmit}>
-            {/* <TextField
-              fullWidth
-              label="Mijoz ismi sharifi"
-              margin="normal"
-              name="clientName"
-              onChange={handleChange}
-            /> */}
+    <Modal open={open} onClose={() => setOpen(false)}>
+      <ThemeProvider theme={defaultTheme}>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <Box
+            sx={{
+              marginTop: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              bgcolor: "background.paper",
+              padding: 4,
+              borderRadius: 1,
+              boxShadow: 24,
+            }}
+          >
+            <Typography component="h1" variant="h5">
+              Buyurtma qo'shish
+            </Typography>
 
-            <TextField
-              fullWidth
-              label="Xizmat turi"
-              margin="normal"
-              name="service_type"
-              onChange={handleChange}
-            />
-
-            <TextField
-              fullWidth
-              label="Xizmat narxi (so'm)"
-              margin="normal"
-              name="service_price"
-              onChange={handleChange}
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ mt: 3, mb: 2 }}
+            <Formik
+              initialValues={initialValues}
+              validationSchema={serviceValidationSchema}
+              onSubmit={handleSubmit}
             >
-              Buyurtmani qo‘shish
-            </Button>
-          </Form>
-        </Box>
-      </Modal>
-    </div>
+              {({ isSubmitting }) => (
+                <Form>
+                  <Field
+                    name="name"
+                    type="text"
+                    as={TextField}
+                    label="Xizmat nomi"
+                    fullWidth
+                    margin="normal"
+                    variant="outlined"
+                    helperText={
+                      <ErrorMessage
+                        name="name"
+                        component="p"
+                        className="text-[red] text-[15px]"
+                      />
+                    }
+                  />
+
+                  <Field
+                    name="price"
+                    type="number"
+                    as={TextField}
+                    label="Xizmat narxi"
+                    fullWidth
+                    margin="normal"
+                    variant="outlined"
+                    helperText={
+                      <ErrorMessage
+                        name="price"
+                        component="p"
+                        className="text-[red] text-[15px]"
+                      />
+                    }
+                  />
+
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    disabled={isSubmitting}
+                    fullWidth
+                    sx={{ mt: 3, mb: 2 }}
+                  >
+                    {isSubmitting ? "Yuklanmoqda..." : "Saqlash"}
+                  </Button>
+                </Form>
+              )}
+            </Formik>
+          </Box>
+        </Container>
+      </ThemeProvider>
+    </Modal>
   );
 }

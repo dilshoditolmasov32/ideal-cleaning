@@ -15,13 +15,10 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { IconButton, InputAdornment } from "@mui/material";
 import auth from "../../components/service/auth";
 
-
 const defaultTheme = createTheme();
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [isExploding, setIsExploding] = useState(false);
   const navigate = useNavigate();
 
   const initialValues = {
@@ -29,11 +26,12 @@ export default function SignIn() {
     password: "",
   };
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const response = await auth.sign_in(values);
-      if (response.status === 200 ) {
-        localStorage.setItem("accses_token", response?.data?.access_token )
+      if (response.status === 200) {
+        localStorage.setItem("email", response?.data?.email)
+        localStorage.setItem("access_token", response?.data?.access_token);
         navigate("/main");
         toast.success("Xush kelibsiz");
       }

@@ -19,14 +19,12 @@ import { useLocation } from "react-router-dom";
 import { Button } from "@mui/material";
 import TextField from '@mui/material/TextField';
 import { useState } from "react";
-import AddServiceModal from "../../service-modal"
 const drawerWidth = 240;
 
 function ResponsiveDrawer(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const [open, setOpen] = useState(false);
   
 
 const {pathname}=useLocation()
@@ -48,7 +46,7 @@ const {pathname}=useLocation()
 
   const drawer = (
     <div>
-      <AddServiceModal open={open} setOpen={setOpen} />
+     
       <Toolbar />
       <Divider />
       <List>
@@ -94,9 +92,7 @@ const {pathname}=useLocation()
           </IconButton>
           
 
-       <Button variant="contained" disableElevation onClick={() => setOpen(true)}>
-       Buyurtma qo'shish
-    </Button>
+     
 
   
         </Toolbar>

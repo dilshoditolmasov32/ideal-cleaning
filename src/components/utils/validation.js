@@ -15,3 +15,14 @@ export const signUpValidationSchema=Yup.object().shape({
     password:Yup.string().matches(/^(?=.*[a-z])(?=.*[A-Z]).{6,}$/, "Password mus be at least 6 characters").required("Password is requerid"),
     phone_number:Yup.string().min(19,"Invalid phone number").required("Phone is required")
 })
+
+
+//==============   SERVICE   ================
+
+export const serviceValidationSchema = Yup.object({
+    name: Yup.string().required('Xizmat nomi talab qilinadi'),
+    price: Yup.number()
+      .required('Xizmat narxi talab qilinadi')  // Majburiy to'ldirilishi kerak
+      .positive('Narx musbat bo\'lishi kerak')  // Musbat qiymat bo'lishi kerak
+      .integer('Narx butun son bo\'lishi kerak') // Butun son bo'lishi kerak
+  });
