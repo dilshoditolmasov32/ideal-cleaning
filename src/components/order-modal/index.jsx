@@ -7,42 +7,46 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Modal } from "@mui/material";
+import Modal from "@mui/material/Modal";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { serviceValidationSchema } from "@validation";
-import { service } from "../service/service";
-
+import { orderValidationSchema } from "@validation";
+import { order } from "../service/order";
+import { useMask } from "@react-input/mask";
+import SelectOption from "../select-option";
 const defaultTheme = createTheme();
 
 export default function ServiceModal({ open, setOpen, editData }) {
+  const inputRef = useMask({
+    mask: "+998 (__) ___-__-__",
+    replacement: { _: /\d/ },
+  });
+
   const initialValues = {
-    name: editData?.name ? editData?.name : "",
-    price: editData?.price ? editData?.price : "",
+    client_full_name: editData?.client_full_name || "",
+    client_phone_number: editData?.client_phone_number || "",
+    amount: editData?.amount || "",
   };
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    if (editData) {
-      const payload = {
-        id: editData.id, ...values,
-      };
-      try {
-        const response = await service.update(payload);
-        if (response.status === 200 || response.status === 201) {
-          window.location.reload();
-        }
-      } catch (error) {
-        console.log(error);
+    const client_phone_number = values.client_phone_number.replace(/\D/g, "");
+    const payload = {
+      ...values,
+      client_phone_number: `+${client_phone_number}`,
+    };
+
+    try {
+      let response;
+      if (editData && editData.id) {
+        response = await order.update({ id: editData.id, ...payload });
+      } else {
+        response = await order.create(payload);
       }
-    } else {
-      try {
-        const response = await service.create(values);
-        if (response.status === 200 || response.status === 201) {
-          window.location.reload();
-          setOpen(false);
-        }
-      } catch (error) {
-        console.log(error);
+      if (response.status === 200 || response.status === 201) {
+        window.location.reload();
+        setOpen(false);
       }
+    } catch (error) {
+      console.log(error);
     }
 
     setSubmitting(false);
@@ -66,27 +70,27 @@ export default function ServiceModal({ open, setOpen, editData }) {
             }}
           >
             <Typography component="h1" variant="h5">
-            Buyurtma ma‘lumotlari
+              Buyurtma ma‘lumotlari
             </Typography>
 
             <Formik
               initialValues={initialValues}
-              validationSchema={serviceValidationSchema}
+              validationSchema={orderValidationSchema}
               onSubmit={handleSubmit}
             >
               {({ isSubmitting }) => (
                 <Form>
                   <Field
-                    name="name"
+                    name="client_full_name"
                     type="text"
                     as={TextField}
-                    label="Xizmat nomi"
+                    label="Xaridorning ismi familyasi"
                     fullWidth
                     margin="normal"
                     variant="outlined"
                     helperText={
                       <ErrorMessage
-                        name="name"
+                        name="client_full_name"
                         component="p"
                         className="text-[red] text-[15px]"
                       />
@@ -94,22 +98,40 @@ export default function ServiceModal({ open, setOpen, editData }) {
                   />
 
                   <Field
-                    name="price"
-                    type="number"
+                    name="client_phone_number"
                     as={TextField}
-                    label="Xizmat narxi"
+                    label="Telefon raqamingizni kiriting"
                     fullWidth
                     margin="normal"
                     variant="outlined"
+                    inputRef={inputRef}
                     helperText={
                       <ErrorMessage
-                        name="price"
+                        name="client_phone_number"
                         component="p"
                         className="text-[red] text-[15px]"
                       />
                     }
                   />
 
+                  <Field
+                    name="amount"
+                    type="number"
+                    as={TextField}
+                    label="Buyurtma miqdorini kiriting"
+                    fullWidth
+                    margin="normal"
+                    variant="outlined"
+                    helperText={
+                      <ErrorMessage
+                        name="amount"
+                        component="p"
+                        className="text-[red] text-[15px]"
+                      />
+                    }
+                  />
+
+<SelectOption/>
                   <Button
                     type="submit"
                     variant="contained"

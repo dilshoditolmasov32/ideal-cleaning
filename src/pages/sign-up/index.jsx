@@ -42,7 +42,6 @@ const navigate=useNavigate()
 
 
   const handleSubmit = async (values) => {
-    console.log(values);
     const phone_number = values.phone_number.replace(/\D/g, "");
     const payload = { ...values, phone_number: `+${phone_number}` };
     try {
