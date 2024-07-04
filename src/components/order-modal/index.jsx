@@ -131,7 +131,7 @@ export default function ServiceModal({ open, setOpen, editData }) {
                     }
                   />
 
-<SelectOption/>
+                  <SelectOption />
                   <Button
                     type="submit"
                     variant="contained"

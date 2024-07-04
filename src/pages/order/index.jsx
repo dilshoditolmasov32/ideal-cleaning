@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import OrderTable from '../../components/order-modal'
+import OrderTable from "../../components/order-modal";
 import AddModal from "../../components/order-modal";
 import { order } from "../../components/service/order";
 
@@ -11,7 +11,10 @@ const Index = () => {
   const getData = async () => {
     try {
       const response = await order.get();
-      if ((response.status===200  && response?.data?.order)||response.status===201  && response?.data?.order) {
+      if (
+        (response.status === 200 && response?.data?.order) ||
+        (response.status === 201 && response?.data?.order)
+      ) {
         setData(response?.data?.services);
       }
     } catch (error) {
@@ -35,7 +38,7 @@ const Index = () => {
           Buyurtma qo'shish
         </Button>
       </div>
-      <OrderTable data={data} /> 
+      <OrderTable data={data} />
     </>
   );
 };

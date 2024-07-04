@@ -11,7 +11,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { service } from "../service/service";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
-import ServiceModal from "../service-modal";
+import OrderModal from "../order-modal";
 import { useState } from "react";
 
 export default function BasicTable({ data }) {
@@ -35,7 +35,7 @@ export default function BasicTable({ data }) {
   };
   return (
     <>
-      <ServiceModal
+      <OrderModal
         editData={editData}
         open={open}
         setOpen={() => setOpen(false)}
