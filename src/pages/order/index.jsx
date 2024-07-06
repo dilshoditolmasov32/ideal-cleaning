@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import OrderTable from "../../components/order-modal";
+import OrderTable from "../../components/order-table";
 import AddModal from "../../components/order-modal";
 import { order } from "../../components/service/order";
 
@@ -12,10 +12,10 @@ const Index = () => {
     try {
       const response = await order.get();
       if (
-        (response.status === 200 && response?.data?.order) ||
-        (response.status === 201 && response?.data?.order)
+        (response.status === 200 && response?.data?.orders_list) ||
+        (response.status === 201 && response?.data?.orders_list)
       ) {
-        setData(response?.data?.services);
+        setData(response?.data?.orders_list);
       }
     } catch (error) {
       console.log(error);

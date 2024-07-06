@@ -34,6 +34,7 @@ export const orderValidationSchema = Yup.object({
     client_phone_number:Yup.string().min(19,"Maydonni to\'g\'ri to\'ldiring").required("Telefon raqamingizni kiriting"),
       amount: Yup.number()
       .required('Kerakli maydonni to\'ldiring')  
-      .positive('Miqdori musbat bo\'lishi kerak')  
+      .positive('Miqdori musbat bo\'lishi kerak') ,
+      service_id: Yup.string().required('Iltimos kerakli maydonni to\'ldiring'), 
      
   });

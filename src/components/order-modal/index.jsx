@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -10,47 +10,71 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Modal from "@mui/material/Modal";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { orderValidationSchema } from "@validation";
-import { order } from "../service/order";
 import { useMask } from "@react-input/mask";
-import SelectOption from "../select-option";
+import { MenuItem, Select } from "@mui/material";
+import { service } from "../service/service";
+import { order } from "../service/order";
+
 const defaultTheme = createTheme();
 
-export default function ServiceModal({ open, setOpen, editData }) {
+export default function Index({ open, setOpen, editData }) {
+  const [data, setData] = useState([]);
   const inputRef = useMask({
     mask: "+998 (__) ___-__-__",
     replacement: { _: /\d/ },
   });
 
   const initialValues = {
-    client_full_name: editData?.client_full_name || "",
-    client_phone_number: editData?.client_phone_number || "",
+    client_full_name: editData?.client_name || "",
+    client_phone_number:editData?.client_phone_number || "",
     amount: editData?.amount || "",
+    service_id: editData?.service_id || "",
   };
 
-  const handleSubmit = async (values, { setSubmitting }) => {
-    const client_phone_number = values.client_phone_number.replace(/\D/g, "");
-    const payload = {
-      ...values,
-      client_phone_number: `+${client_phone_number}`,
-    };
-
+  const getData = async () => {
     try {
-      let response;
-      if (editData && editData.id) {
-        response = await order.update({ id: editData.id, ...payload });
-      } else {
-        response = await order.create(payload);
-      }
-      if (response.status === 200 || response.status === 201) {
-        window.location.reload();
-        setOpen(false);
+      const response = await service.get();
+      if (response.status === 200 && response?.data?.services) {
+        setData(response?.data?.services);
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
     }
-
-    setSubmitting(false);
   };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const handleSubmit = async (values) => {
+    const phone_number = values.client_phone_number.replace(/\D/g, "");
+    const payload = { ...values, client_phone_number: `+${phone_number}` };
+if (editData) {
+  const payload = {
+    id: editData.id, ...values,
+  };
+  try {
+    const response = await order.update(payload);
+    if (response.status === 200 || response.status === 201) {
+      window.location.reload();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+} else {
+  try {
+    const response = await order.create(payload);
+
+    if (response.status === 201) {
+      window.location.reload();
+      setOpen(false);
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+}
+  
 
   return (
     <Modal open={open} onClose={() => setOpen(false)}>
@@ -131,7 +155,29 @@ export default function ServiceModal({ open, setOpen, editData }) {
                     }
                   />
 
-                  <SelectOption />
+                  <Field
+                    name="service_id"
+                    type="text"
+                    as={Select}
+                    label="Buyurtma miqdorini kiriting"
+                    fullWidth
+                    margin="normal"
+                    variant="outlined"
+                    helperText={
+                      <ErrorMessage
+                        name="service_id"
+                        component="p"
+                        className="text-[red] text-[15px]"
+                      />
+                    }
+                  >
+                    {data?.map((item) => (
+                      <MenuItem key={item.id} value={item.id}>
+                        {item.name}
+                      </MenuItem>
+                    ))}
+                  </Field>
+
                   <Button
                     type="submit"
                     variant="contained"

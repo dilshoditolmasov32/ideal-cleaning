@@ -8,7 +8,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { FaEdit } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { service } from "../service/service";
+import { order } from "../service/order";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
 import OrderModal from "../order-modal";
@@ -17,9 +17,10 @@ import { useState } from "react";
 export default function BasicTable({ data }) {
   const [editData, setEditData] = useState({});
   const [open, setOpen] = useState(false);
+
   const deleteItem = async (id) => {
     try {
-      const response = await service.delete(id);
+      const response = await order.delete(id);
       if (response.status === 200 || response.status === 201) {
         window.location.reload();
         toast.info("Ma'lumot muvaqqiyati o'chirildi.");
@@ -47,6 +48,8 @@ export default function BasicTable({ data }) {
               <TableCell>T/r</TableCell>
               <TableCell align="right">Xaridorning ismi familyasi</TableCell>
               <TableCell align="right">Telefon raqami</TableCell>
+              <TableCell align="right">Xizmat nomi</TableCell>
+              <TableCell align="right">Buyurtma narxi</TableCell>
               <TableCell align="right">Buyurtma miqdori</TableCell>
               <TableCell align="right" sx={{ paddingRight: "60px" }}>
                 Action
@@ -62,8 +65,10 @@ export default function BasicTable({ data }) {
                 <TableCell component="th" scope="row">
                   {index + 1}
                 </TableCell>
-                <TableCell align="right"> {item.client_full_name}</TableCell>
+                <TableCell align="right"> {item.client_name}</TableCell>
                 <TableCell align="right"> {item.client_phone_number}</TableCell>
+                <TableCell align="right"> {item.service_name}</TableCell>
+                <TableCell align="right"> {item.price}</TableCell>
                 <TableCell align="right"> {item.amount}</TableCell>
                 <TableCell align="right" className="flex ">
                   <Button onClick={() => openModal(item)}>
