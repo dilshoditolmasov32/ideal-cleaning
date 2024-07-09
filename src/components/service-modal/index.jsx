@@ -16,9 +16,10 @@ const defaultTheme = createTheme();
 
 export default function ServiceModal({ open, setOpen, editData }) {
   const initialValues = {
-    name: editData?.name ? editData?.name : "",
-    price: editData?.price ? editData?.price : "",
+    name: editData?.name ?? "",
+    price: editData?.price ?? "",
   };
+  
 
   const handleSubmit = async (values, { setSubmitting }) => {
     if (editData) {

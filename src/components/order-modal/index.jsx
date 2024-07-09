@@ -1,20 +1,19 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Modal from "@mui/material/Modal";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import { orderValidationSchema } from "@validation";
-import { useMask } from "@react-input/mask";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
 import { MenuItem, Select } from "@mui/material";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import CssBaseline from "@mui/material/CssBaseline";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { useMask } from "@react-input/mask";
+import { orderValidationSchema } from "@validation";
 import { service } from "../service/service";
-import { order } from "../service/order";
-
+import  {order}  from "../service/order";
 const defaultTheme = createTheme();
 
 export default function Index({ open, setOpen, editData }) {
@@ -47,6 +46,7 @@ export default function Index({ open, setOpen, editData }) {
   }, []);
 
   const handleSubmit = async (values) => {
+    console.log(values)
     const phone_number = values.client_phone_number.replace(/\D/g, "");
     const payload = { ...values, client_phone_number: `+${phone_number}` };
 if (editData) {
@@ -55,11 +55,13 @@ if (editData) {
   };
   try {
     const response = await order.update(payload);
+    console.log(response)
     if (response.status === 200 || response.status === 201) {
       window.location.reload();
+      setOpen(false)
     }
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
   }
 } else {
   try {

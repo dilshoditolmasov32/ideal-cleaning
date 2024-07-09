@@ -1,5 +1,8 @@
+import * as React from "react";
 import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
+import Pagination from "@mui/material/Pagination";
+
 import OrderTable from "../../components/order-table";
 import AddModal from "../../components/order-modal";
 import { order } from "../../components/service/order";
@@ -7,25 +10,39 @@ import { order } from "../../components/service/order";
 const Index = () => {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState([]);
+  const [params, setParams] = useState({
+    limit: 3,
+    page: 1,
+  });
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+
+ 
 
   const getData = async () => {
     try {
-      const response = await order.get();
-      if (
-        (response.status === 200 && response?.data?.orders_list) ||
-        (response.status === 201 && response?.data?.orders_list)
-      ) {
+      const response = await order.get(params);
+
+      if (response.status === 200 && response?.data?.orders_list) {
         setData(response?.data?.orders_list);
+        let count = Math.ceil(response?.data?.total / params.limit);
+        setTotal(count);
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
     }
   };
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [params]);
 
+  const handleChange = (event, value) => {
+   setParams({
+    ...params,
+    page:value
+   })
+  };
   return (
     <>
       <AddModal open={open} setOpen={setOpen} />
@@ -39,6 +56,13 @@ const Index = () => {
         </Button>
       </div>
       <OrderTable data={data} />
+
+      <Pagination
+        count={total}
+        page={params.page}
+        onChange={handleChange}
+        sx={{ marginTop: "25px" }}
+      />
     </>
   );
 };

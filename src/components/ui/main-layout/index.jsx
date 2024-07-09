@@ -16,18 +16,16 @@ import Toolbar from "@mui/material/Toolbar";
 import routes from "../../../router/router";
 import { NavLink, Outlet } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { Button } from "@mui/material";
-import TextField from '@mui/material/TextField';
 import { useState } from "react";
+import logo from "../../../assets/logo.svg";
 const drawerWidth = 240;
 
 function ResponsiveDrawer(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  
 
-const {pathname}=useLocation()
+  const { pathname } = useLocation();
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -45,14 +43,19 @@ const {pathname}=useLocation()
   };
 
   const drawer = (
-    <div>
-     
-      <Toolbar />
+    <>
+      <div className="flex justify-center items-center py-2 ">
+        <img src={logo} alt="logo" className="w-40" />
+      </div>
       <Divider />
       <List>
         {routes.map((item, index) => (
-          <NavLink to={item.path} key={index} className={item.path===pathname ? "block bg-blue text-white" : ""}>
-            <ListItem  disablePadding>
+          <NavLink
+            to={item.path}
+            key={index}
+            className={item.path === pathname ? "block bg-blue text-white" : ""}
+          >
+            <ListItem disablePadding>
               <ListItemButton>
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.content} />
@@ -62,43 +65,41 @@ const {pathname}=useLocation()
         ))}
       </List>
       <Divider />
-    </div>
+    </>
   );
-
   const container =
     window !== undefined ? () => window().document.body : undefined;
-
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          width: { sm: `calc(100% - ${drawerWidth}px)`, paddingBottom:"8px" },
           ml: { sm: `${drawerWidth}px` },
-          bgcolor:'white'
+          bgcolor: "rgb(0, 123, 255",
+           display: "flex", justifyContent:"space-between", alignItems:"center"
         }}
       >
-        
         <Toolbar>
           <IconButton
             color="inherit"
             aria-label="open drawer"
             edge="end"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" }, color:"black", text:"28px"}}
+            sx={{
+              mr: 2,
+              display: { sm: "none" },
+              color: "black",
+              text: "28px",
+            }}
           >
             <MenuIcon />
           </IconButton>
-          
-
-     
-
-  
         </Toolbar>
 
-      
       </AppBar>
+        <h1>Hello</h1>
       <Box
         component="nav"
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
@@ -111,7 +112,7 @@ const {pathname}=useLocation()
           onTransitionEnd={handleDrawerTransitionEnd}
           onClose={handleDrawerClose}
           ModalProps={{
-            keepMounted: true, 
+            keepMounted: true,
           }}
           sx={{
             display: { xs: "block", sm: "none" },
@@ -146,7 +147,7 @@ const {pathname}=useLocation()
         }}
       >
         <Toolbar />
-        <Outlet/>
+        <Outlet />
       </Box>
     </Box>
   );
