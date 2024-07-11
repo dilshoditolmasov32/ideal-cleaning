@@ -2,7 +2,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import Pagination from "@mui/material/Pagination";
 import CircularProgress from "@mui/material/CircularProgress";
-import OrderTable from "../../components/cleints-table";
+import Table from "../../components/cleints-table";
 import { cleint } from "../../components/service/cleint";
 
 const Index = () => {
@@ -20,7 +20,6 @@ const Index = () => {
     setError(null);
     try {
       const response = await cleint.get(params);
-
       if (response.status === 200 && response?.data?.clients_list) {
         setData(response?.data?.clients_list);
         let count = Math.ceil(response?.data?.total / params.limit);
@@ -51,7 +50,7 @@ const Index = () => {
       ) : error ? (
         <div>{error}</div>
       ) : (
-        <OrderTable data={data} />
+        <Table data={data} />
       )}
 
       <Pagination

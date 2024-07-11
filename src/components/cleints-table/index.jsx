@@ -13,15 +13,15 @@ import { cleint } from "../service/cleint";
 import { toast } from "react-toastify";
 
 export default function BasicTable({ data }) {
+    console.log(data)
   const [tableData, setTableData] = useState(data);
   const [loading, setLoading] = useState(false);
 
   const deleteItem = async (id) => {
     setLoading(true);
     try {
-      const response = await cleint.delete(id);
+      const response = await cleint.delete(id)
       if (response.status === 200 || response.status === 201) {
-        // Holatni yangilab, o'chirilgan elementni jadvaldan olib tashlash
         setTableData((prevData) => prevData.filter((item) => item.id !== id));
         toast.info("Ma'lumot muvaffaqiyatli o'chirildi.");
       }

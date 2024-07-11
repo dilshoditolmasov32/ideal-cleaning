@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
+import TextField from '@mui/material/TextField';
 import ServiceTable from "../../components/service-table";
 import AddServiceModal from "../../components/service-modal";
 import { service } from "../../components/service/service";
@@ -11,6 +12,7 @@ const Index = () => {
   const [params, setParams] = useState({
     limit: 3,
     page: 1,
+    name:""
   });
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -18,7 +20,6 @@ const Index = () => {
   const getData = async () => {
     try {
       const response = await service.get(params);
-      console.log(response, "21-qator")
       if ((response.status===200  && response?.data?.services)||response.status===201  && response?.data?.services) {
         setData(response?.data?.services);
         let count = Math.ceil(response?.data?.total / params.limit);
@@ -33,6 +34,8 @@ const Index = () => {
     getData();
   }, [params]);
 
+
+
   const handleChange = (event, value) => {
     setParams({
      ...params,
@@ -42,7 +45,8 @@ const Index = () => {
   return (
     <>
       <AddServiceModal open={open} setOpen={setOpen} />
-      <div className="flex justify-end mb-3">
+      <div className="flex justify-between mb-3">
+      <TextField  label="Search..." id="fullWidth"  />
         <Button
           variant="contained"
           disableElevation

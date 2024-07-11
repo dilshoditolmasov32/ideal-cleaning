@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 
 import OrderTable from "../../components/order-table";
@@ -13,11 +13,9 @@ const Index = () => {
   const [params, setParams] = useState({
     limit: 3,
     page: 1,
+    name: ""
   });
   const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-
- 
 
   const getData = async () => {
     try {
@@ -37,16 +35,25 @@ const Index = () => {
     getData();
   }, [params]);
 
-  const handleChange = (event, value) => {
-   setParams({
-    ...params,
-    page:value
-   })
+  const handleInputChange = (e) => {
+    setParams({
+      ...params,
+      name: e.target.value
+    });
   };
+
+  const handleChange = (event, value) => {
+    setParams({
+      ...params,
+      page: value
+    });
+  };
+
   return (
     <>
       <AddModal open={open} setOpen={setOpen} />
-      <div className="flex justify-end mb-3">
+      <div className="flex justify-between mb-3">
+        <TextField label="Search..." id="fullWidth" onChange={handleInputChange} />
         <Button
           variant="contained"
           disableElevation
@@ -56,7 +63,6 @@ const Index = () => {
         </Button>
       </div>
       <OrderTable data={data} />
-
       <Pagination
         count={total}
         page={params.page}

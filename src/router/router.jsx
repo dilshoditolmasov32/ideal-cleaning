@@ -5,7 +5,7 @@ import { AiOutlineCustomerService } from "react-icons/ai";
 const routes=[
     {
         path:"/main",
-        content:"Dashboard",
+        content:"Cleints",
         icon:<LuLayoutDashboard />
     },
     {
